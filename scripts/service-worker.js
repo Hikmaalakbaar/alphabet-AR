@@ -16,7 +16,6 @@ self.addEventListener("install", function(event) {
 
 addEventListener("fetch", function(event) {
   console.log(event.request);
-  alert("hey");
   event.respondWith(
     caches.match(event.request).then(function(response) {
       if (response) {
@@ -29,13 +28,9 @@ addEventListener("fetch", function(event) {
               return res; // return the fetched data
             });
           })
-          .catch(function(err) {
-            // fallback mechanism
-            return caches
-              .open(CACHE_CONTAINING_ERROR_MESSAGES)
-              .then(function(cache) {
-                return cache.match("/offline.html");
-              });
+          .catch(function() {
+            // If offline and not in cache, just fail the request (no offline.html shipped).
+            return response;
           });
       }
     })
